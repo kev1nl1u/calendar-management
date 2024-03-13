@@ -3,6 +3,7 @@ La webapp è stata realizzata con HTML, CSS e JavaScript. La struttura è divisa
 - **index.html**: la pagina principale, con il calendario e la lista degli eventi;
 - **edit.html**: la pagina per la modifica degli eventi;
 - **./common/**: la cartella con le risorse comuni, tra cui CSS, JavaScript e immagini.
+La webapp non è responsive.
 
 ## Calendario
 Il calendario della webapp è stato realizzato con JavaScript e jQuery. Il suo funzionamento è controllato da `./common/js/calendar.js`.
@@ -25,3 +26,8 @@ Fa una richiesta POST al server per ottenere gli eventi di una data. La data vie
 
 #### Metodi di navigazione
 6 metodi per navigare nel calendario, per cambiare giorno, mese, per selezionare una data e per tornare al giorno corrente.
+
+## Modifica degli eventi
+La pagina per la modifica degli eventi è `edit.html` ed è uguale a `index.html`, ma con la possibilità di aggiungere e cancellare gli eventi.
+
+L'aggiunta e la cancellazione sono gestite da dei script in JavaScript interni che fanno delle richieste POST al server.
