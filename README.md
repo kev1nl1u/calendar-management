@@ -62,6 +62,14 @@ A seconda del path, esegue il codice necessario per elaborare una risposta.
 > _params_ si riferisce ai parametri passati dei vari metodi.
 
 
+## Criticità
+Il server è stato realizzato per scopi didattici e non è stato testato in un ambiente di produzione.
+
+Inoltre, XML è molto vulnerabile a attacchi di tipo _XXE_ (XML eXternal Entity). Per questo motivo, è sconsigliato l'utilizzo di XML per la memorizzazione di dati sensibili o importanti. È più consigliato utilizzare un database SQL in un ambiente di produzione.
+
+Infine, il codice è stato scritto in maniera molto semplice a causa dei tempi stretti e non è stato ottimizzato per la velocità o per la sicurezza.
+
+
 ## Contatti
 Per qualsiasi dubbio o domanda, contattami [qui](https://kliu.win/contacts).
 
