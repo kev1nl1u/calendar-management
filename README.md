@@ -60,3 +60,16 @@ A seconda del path, esegue il codice necessario per elaborare una risposta.
 </ul>
 
 > _params_ si riferisce ai parametri passati dei vari metodi.
+
+
+## Contatti
+Per qualsiasi dubbio o domanda, contattami [qui](https://kliu.win/contacts).
+
+
+# Licenza
+
+[![CC BY-SA L](https://i.creativecommons.org/l/by-sa/4.0/80x15.png)](https://creativecommons.org/licenses/by-sa/4.0/deed.it)
+
+Quest'opera è distribuita con licenza [Creative Commons Attribution-ShareAlike 4.0 International License](http://creativecommons.org/licenses/by-sa/4.0/).
+
+[![CC BY-SA](https://i.creativecommons.org/l/by-sa/4.0/88x31.png)](https://creativecommons.org/licenses/by-sa/4.0/deed.it)
