@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><events>
+	<event id="1">
+		<summary>CONSEGNA DIPLOMI A.S. 2022-23</summary>
+		<location>SALA MENSA</location>
+		<start timezone="Europe/Rome">
+			<date>2024-02-24</date>
+			<time>15:00:00</time>
+		</start>
+		<end timezone="Europe/Rome">
+			<date>2024-02-24</date>
+			<time>18:00:00</time>
+		</end>
+	</event>
+	<event id="2">
+		<summary>VIAGGIO D'ISTRUZIONE</summary>
+		<classi>
+			<classe>4CIIN</classe>
+		</classi>
+		<insegnanti>
+			<insegnante>CULPO</insegnante>
+			<insegnante>FERRI</insegnante>
+		</insegnanti>
+		<start timezone="Europe/Rome">
+			<date>2024-02-25</date>
+		</start>
+		<end timezone="Europe/Rome">
+			<date>2024-02-28</date>
+		</end>
+	</event>
+	<event id="3">
+		<summary>PROGETTO SALVAVITA</summary>
+		<location>AULA MAGNA</location>
+		<classi>
+			<classe>4AMME</classe>
+			<classe>4BIIN</classe>
+		</classi>
+		<insegnanti>
+			<insegnante>PREVIATI</insegnante>
+		</insegnanti>
+		<start timezone="Europe/Rome">
+			<date>2024-03-11</date>
+			<time>08:00:00</time>
+		</start>
+		<end timezone="Europe/Rome">
+			<date>2024-03-11</date>
+			<time>13:00:00</time>
+		</end>
+	</event>
+	<event id="4">
+		<summary>ENTRATA POSTICIPATA</summary>
+		<classi>
+			<classe>3AIIN</classe>
+		</classi>
+		<start timezone="Europe/Rome">
+			<date>2024-03-11</date>
+			<time>09:00:00</time>
+		</start>
+	</event>
+	<event id="5">
+		<summary>PRENOTAZIONE AULA</summary>
+		<location>AULA 58</location>
+		<insegnanti>
+			<insegnante>BREGOLA</insegnante>
+		</insegnanti>
+		<start timezone="Europe/Rome">
+			<date>2024-03-13</date>
+			<time>14:00:00</time>
+		</start>
+		<end timezone="Europe/Rome">
+			<date>2024-03-13</date>
+			<time>16:30:00</time>
+		</end>
+	</event>
+	<event id="6">
+		<summary>CONSIGLIO DI CLASSE</summary>
+		<location>AULA 23 (con tecnico)</location>
+		<start timezone="Europe/Rome">
+			<date>2024-03-13</date>
+			<time>14:30:00</time>
+		</start>
+		<end timezone="Europe/Rome">
+			<date>2024-03-13</date>
+			<time>19:00:00</time>
+		</end>
+	</event>
+	<event id="7">
+		<summary>SOSTITUZIONE</summary>
+		<location>AULA 360</location>
+		<classi>
+			<classe>5CIIN</classe>
+		</classi>
+		<insegnanti>
+			<insegnante>GHEDINI</insegnante>
+		</insegnanti>
+		<start timezone="Europe/Rome">
+			<date>2024-03-26</date>
+			<time>11:00:00</time>
+		</start>
+		<end timezone="Europe/Rome">
+			<date>2024-03-26</date>
+			<time>12:00:00</time>
+		</end>
+	</event>
+	<event id="8">
+		<summary>SOSTITUZIONE</summary>
+		<location>AULA 380</location>
+		<classi>
+			<classe>4CIIN</classe>
+		</classi>
+		<insegnanti>
+			<insegnante>MAREGA</insegnante>
+		</insegnanti>
+		<start timezone="Europe/Rome">
+			<date>2024-03-26</date>
+			<time>10:00:00</time>
+		</start>
+		<end timezone="Europe/Rome">
+			<date>2024-03-26</date>
+			<time>13:00:00</time>
+		</end>
+	</event>
+</events>

@@ -1,0 +1,119 @@
+
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Gestione calendario.">
+    <link rel="icon" type="image/x-icon" href="/common/img/favicon.webp">
+    <!-- css -->
+    <link rel="stylesheet" href="/common/css/style.css" type="text/css">
+    <link rel="stylesheet" href="/common/css/dark.css" type="text/css">
+	<link rel="stylesheet" href="/common/css/calendar.css" type="text/css">
+    <!-- Font Awesome -->
+    <script src="https://kit.fontawesome.com/95ae55bd9a.js" crossorigin="anonymous"></script>
+    <!-- Material Icon -->
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <!-- jQuery 3.6.0 -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <!-- Moment.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+
+    <title>Gestione Calendario</title>
+
+</head>
+<body>
+
+	<!-- SIDEBAR -->
+    <div class="sidebar">
+		<div class="sidebar-inner-float">
+			<div class="sidebar-inner">
+				<a class="sidebar-link" id="home" href="/">
+					<span class="material-symbols-outlined">calendar_month</span>
+					<span class="sidebar-link-text">Calendario</span>
+				</a>
+				<a class="sidebar-link" id="edit" href="/edit">
+					<span class="material-symbols-outlined">edit_calendar</span>
+					<span class="sidebar-link-text">Modifica</span>
+				</a>
+				<a class="sidebar-link" id="dl" href="/dl">
+					<span class="material-symbols-outlined">download</span>
+					<span class="sidebar-link-text">DL XML</span>
+				</a>
+			</div>
+		</div>
+    </div>
+	<!-- SIDEBAR SCRIPTS -->
+	<script>
+        // set active
+        var active = document.getElementById('home');
+        active.classList.add('active');
+    </script>
+	<script>
+        // on scroll down hide / up show sidebar-link-text on mobile
+        function nav(){
+            if (window.innerWidth <= 600) {
+                var prevScrollpos = window.pageYOffset;
+                window.onscroll = function() {
+                    var currentScrollPos = window.pageYOffset;
+                    if (prevScrollpos > currentScrollPos || (window.innerHeight + window.pageYOffset) >= document.body.offsetHeight-1 || currentScrollPos < 10) {
+                        $(".sidebar-link-text").slideDown(300);
+                        $(".sidebar").css("height", "78px");
+                    } else {
+                        $(".sidebar-link-text").slideUp(300);
+                        $(".sidebar").css("height", "58px");
+                    }
+                    prevScrollpos = currentScrollPos;
+                }
+            } else {
+                // default size
+                $(".sidebar").css("height", "100%");
+                $(".sidebar-link-text").show();
+                window.onscroll = null;
+            }
+        }
+        nav();
+        window.onresize = function() {
+            nav();
+        };
+    </script>
+
+
+<!-- CONTENT -->
+	<div class="main-container">
+		<div class="main">
+
+<div class="calendar-container">
+	<!-- CALENDARIO -->
+	<div class="calendar"></div>
+	<!-- EVENTI -->
+	<div class="events">
+		<h2>Eventi</h2>
+		<div class="events-header">
+			<div class="events-header-buttons">
+				<button class="event-btn" onclick="prevDay()"><span class="material-symbols-outlined">navigate_before</span></button>
+				<div class="events-header-date">
+					
+				</div>
+				<button class="event-btn" onclick="nextDay()"><span class="material-symbols-outlined">navigate_next</span></button>
+			</div>
+		</div>
+		<div class="events-list">
+			<!--div class="events-list-header">
+				<div>Info</div>
+				<div>Evento</div>
+			</div-->
+			<div class="events-list-body" id="events-list">
+			</div>
+		</div>
+	</div>
+	<!-- SCRIPTS -->
+	<script src="/common/js/calendar.js"></script>
+	<script>const calendarControl = new CalendarControl();</script>
+</div>
+
+		</div>
+	</div>
+</body>
+</html>

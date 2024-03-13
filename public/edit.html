@@ -1,0 +1,625 @@
+
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Modifica Calendario.">
+    <script src="/common/js/hamburger.js" defer></script>
+    <link rel="icon" type="image/x-icon" href="/common/img/favicon.webp">
+    <!-- css -->
+    <link rel="stylesheet" href="/common/css/style.css" type="text/css">
+    <link rel="stylesheet" href="/common/css/dark.css" type="text/css">
+	<link rel="stylesheet" href="/common/css/calendar.css" type="text/css">
+	<link rel="stylesheet" href="/common/css/page.css" type="text/css">
+	<link rel="stylesheet" href="/common/css/dashboard.css" type="text/css">
+    <!-- Font Awesome -->
+    <script src="https://kit.fontawesome.com/95ae55bd9a.js" crossorigin="anonymous"></script>
+    <!-- Material Icon -->
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <!-- jQuery 3.6.0 -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <!-- Moment.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+
+    <title>Modifica Calendario</title>
+
+</head>
+<body>
+
+	<!-- SIDEBAR -->
+    <div class="sidebar">
+		<div class="sidebar-inner-float">
+			<div class="sidebar-inner">
+				<a class="sidebar-link" id="home" href="/">
+					<span class="material-symbols-outlined">calendar_month</span>
+					<span class="sidebar-link-text">Calendario</span>
+				</a>
+				<a class="sidebar-link" id="edit" href="/edit">
+					<span class="material-symbols-outlined">edit_calendar</span>
+					<span class="sidebar-link-text">Modifica</span>
+				</a>
+				<a class="sidebar-link" id="dl" href="/dl">
+					<span class="material-symbols-outlined">download</span>
+					<span class="sidebar-link-text">DL XML</span>
+				</a>
+			</div>
+		</div>
+    </div>
+	<!-- SIDEBAR SCRIPTS -->
+	<script>
+        // set active
+        var active = document.getElementById('edit');
+        active.classList.add('active');
+    </script>
+	<script>
+        // on scroll down hide / up show sidebar-link-text on mobile
+        function nav(){
+            if (window.innerWidth <= 600) {
+                var prevScrollpos = window.pageYOffset;
+                window.onscroll = function() {
+                    var currentScrollPos = window.pageYOffset;
+                    if (prevScrollpos > currentScrollPos || (window.innerHeight + window.pageYOffset) >= document.body.offsetHeight-1 || currentScrollPos < 10) {
+                        $(".sidebar-link-text").slideDown(300);
+                        $(".sidebar").css("height", "78px");
+                    } else {
+                        $(".sidebar-link-text").slideUp(300);
+                        $(".sidebar").css("height", "58px");
+                    }
+                    prevScrollpos = currentScrollPos;
+                }
+            } else {
+                // default size
+                $(".sidebar").css("height", "100%");
+                $(".sidebar-link-text").show();
+                window.onscroll = null;
+            }
+        }
+        nav();
+        window.onresize = function() {
+            nav();
+        };
+    </script>
+
+	
+<!-- CONTENT -->
+	<div class="main-container">
+		<div class="main">
+
+<div class="calendar-container">
+	<!-- CALENDARIO -->
+	<div class="calendar"></div>
+	<!-- EVENTI -->
+	<div class="events">
+		<h2>Eventi</h2>
+		<div class="events-header">
+			<div class="events-header-buttons">
+				<button class="event-btn" onclick="prevDay()"><span class="material-symbols-outlined">navigate_before</span></button>
+				<div class="events-header-date">
+					
+				</div>
+				<button class="event-btn" onclick="nextDay()"><span class="material-symbols-outlined">navigate_next</span></button>
+			</div>
+		</div>
+		<div class="addevent-container" onclick="showModal('addmodal')">
+			<div class="addevent">
+				<span class="material-symbols-outlined" style="font-size: 25px; color: var(--on-surface-variant);">
+					add_box
+				</span>
+			</div>
+		</div>
+		<div class="events-list">
+			<!--div class="events-list-header">
+				<div>Info</div>
+				<div>Evento</div>
+			</div-->
+			<div class="events-list-body" id="events-list">
+			</div>
+		</div>
+	</div>
+	<!-- SCRIPTS -->
+	<script src="/common/js/calendar.js"></script>
+	<script>const calendarControl = new CalendarControl(true);</script>
+
+	<!-- MODAL -->
+	<div id="addmodal" class="modal">
+		<div class="modal-inner">
+			<span class="btn text modal-close" onclick="closeModal('addmodal')">&times;</span>
+			<div class="flex-center-y" style="width: 100%;">
+				<h2>Aggiungi Evento</h2>
+				<div class="my-10px">
+					<div class="flex-center">
+						<select class="add-type" name="gender" required>
+							<option value="SOSTITUZIONE">Sostituzione</option>
+							<option value="ENTRATA POSTICIPATA">Entrata posticipata</option>
+							<option value="USCITA ANTICIPATA">Uscita anticipata</option>
+							<option value="PRENOTAZIONE AULA">Prenotazione aula</option>
+							<option value="ALTRO">Altro</option>
+						</select>
+					</div>
+				</div>
+				<script>
+					// if selected altro show input
+					$(".add-type").change(function(){
+						switch($(this).val()) {
+							case "SOSTITUZIONE":
+								$(".add-form").slideUp(300);
+								$(".add-sostituzione").slideDown(300);
+								break;
+							case "ENTRATA POSTICIPATA":
+								$(".add-form").slideUp(300);
+								$(".add-entrata").slideDown(300);
+								break;
+							case "USCITA ANTICIPATA":
+								$(".add-form").slideUp(300);
+								$(".add-uscita").slideDown(300);
+								break;
+							case "PRENOTAZIONE AULA":
+								$(".add-form").slideUp(300);
+								$(".add-prenotazione").slideDown(300);
+								break;
+							case "ALTRO":
+								$(".add-form").slideUp(300);
+								$(".add-altro").slideDown(300);
+								break;
+							default:
+								break;
+						}
+					});
+				</script>
+
+				<!-- SOSTITUZIONE -->
+				<div class="my-10px add-sostituzione add-form">
+					<div class="flex-center" style="gap: 15px;">
+						<div class="material-textfield my-10px" style="width: 100px;">
+							<input placeholder=" " type="time" required>
+							<label>Inizio (<i class="fa-solid fa-asterisk" style="font-size:0.7rem"></i>)</label>
+						</div>
+						<div class="material-textfield my-10px" style="width: 100px;">
+							<input placeholder=" " type="time" required>
+							<label>Fine (<i class="fa-solid fa-asterisk" style="font-size:0.7rem"></i>)</label>
+						</div>
+					</div>
+					<div class="flex-center" style="gap: 15px; align-items: flex-start;">
+						<div class="material-textfield my-10px" style="width: 100px;">
+							<input placeholder=" " type="text" required>
+							<label>Aula (<i class="fa-solid fa-asterisk" style="font-size:0.7rem"></i>)</label>
+						</div>
+						<div class="add-classi">
+							<div class="add-classi-forms">
+								<div class="material-textfield my-10px">
+									<input placeholder=" " type="text">
+									<label>Classe (<i class="fa-solid fa-asterisk" style="font-size:0.7rem"></i>)</label>
+								</div>
+							</div>
+							<!-- add another classe btn -->
+							<a class="btn text" onclick="addClasse('.add-sostituzione')">
+								<span class="material-symbols-outlined">add</span>
+							</a>
+							<!-- remove classe btn -->
+							<a class="btn text" id="rmclasse" onclick="removeClasse('.add-sostituzione')" style="display:none">
+								<span class="material-symbols-outlined">remove</span>
+							</a>
+						</div>
+						<div class="add-insegnanti">
+							<div class="add-insegnanti-forms">
+								<div class="material-textfield my-10px">
+									<input placeholder=" " type="text">
+									<label>Insegnante (<i class="fa-solid fa-asterisk" style="font-size:0.7rem"></i>)</label>
+								</div>
+							</div>
+							<!-- add another prof btn -->
+							<a class="btn text" onclick="addProf('.add-sostituzione')">
+								<span class="material-symbols-outlined">add</span>
+							</a>
+							<a class="btn text" id="rminsegnante" onclick="removeProf('.add-sostituzione')" style="display:none">
+								<span class="material-symbols-outlined">remove</span>
+							</a>
+						</div>
+					</div>
+				</div>
+				<!---->
+
+				<!-- ENTRATA POSTICIPATA -->
+				<div class="my-10px add-entrata add-form" style="display: none;">
+					<div class="flex-center" style="gap: 15px;;">
+						<div class="material-textfield my-10px">
+							<input placeholder=" " type="text" required>
+							<label>Classe (<i class="fa-solid fa-asterisk" style="font-size:0.7rem"></i>)</label>
+						</div>
+						<div class="material-textfield my-10px" style="width: 100px;">
+							<input placeholder=" " type="time" required>
+							<label>Orario (<i class="fa-solid fa-asterisk" style="font-size:0.7rem"></i>)</label>
+						</div>
+					</div>
+				</div>
+				<!---->
+
+				<!-- USCITA ANTICIPATA -->
+				<div class="my-10px add-uscita add-form" style="display: none;">
+					<div class="flex-center" style="gap: 15px;">
+						<div class="material-textfield my-10px">
+							<input placeholder=" " type="text" required>
+							<label>Classe (<i class="fa-solid fa-asterisk" style="font-size:0.7rem"></i>)</label>
+						</div>
+						<div class="material-textfield my-10px" style="width: 100px;">
+							<input placeholder=" " type="time" required>
+							<label>Orario (<i class="fa-solid fa-asterisk" style="font-size:0.7rem"></i>)</label>
+						</div>
+					</div>
+				</div>
+				<!---->
+
+				<!-- PRENOTAZIONE AULA -->
+				<div class="my-10px add-prenotazione add-form" style="display: none;">
+					<div class="flex-center" style="gap: 15px">
+						<div class="flex-center" style="gap: 15px;">
+							<div class="material-textfield my-10px" style="width: 100px;">
+								<input placeholder=" " type="time" required>
+								<label>Inizio (<i class="fa-solid fa-asterisk" style="font-size:0.7rem"></i>)</label>
+							</div>
+							<div class="material-textfield my-10px" style="width: 100px;">
+								<input placeholder=" " type="time" required>
+								<label>Fine (<i class="fa-solid fa-asterisk" style="font-size:0.7rem"></i>)</label>
+							</div>
+						</div>
+					</div>
+					<div class="flex-center" style="gap: 15px">
+						<div class="material-textfield my-10px" style="width: 100px;">
+							<input placeholder=" " type="text" required>
+							<label>Aula (<i class="fa-solid fa-asterisk" style="font-size:0.7rem"></i>)</label>
+						</div>
+						<div class="material-textfield my-10px">
+							<input placeholder=" " type="text">
+							<label>Insegnante / Studente (<i class="fa-solid fa-asterisk" style="font-size:0.7rem"></i>)</label>
+						</div>
+					</div>
+				</div>
+				<!---->
+
+				<!-- ALTRO - all forms -->
+				<div class="my-10px add-altro add-form" style="display: none;">
+					<div class="flex-center" style="gap: 15px">
+						<div class="flex-center" style="gap: 15px;">
+							<div class="material-textfield my-10px" style="width: 100px;">
+								<input placeholder=" " type="time" required>
+								<label>Inizio (<i class="fa-solid fa-asterisk" style="font-size:0.7rem"></i>)</label>
+							</div>
+							<div class="material-textfield my-10px" style="width: 100px;">
+								<input placeholder=" " type="time">
+								<label>Fine</label>
+							</div>
+						</div>
+					</div>
+					<div class="flex-center-y">
+						<div class="material-textfield my-10px">
+							<input placeholder=" " type="text" required>
+							<label>Summary (<i class="fa-solid fa-asterisk" style="font-size:0.7rem"></i>)</label>
+						</div>
+						<div class="flex-center" style="gap: 15px; align-items: flex-start;">
+							<div class="material-textfield my-10px" style="width: 100px;">
+								<input placeholder=" " type="text">
+								<label>Aula</label>
+							</div>
+							<div class="add-classi">
+								<div class="add-classi-forms">
+									<div class="material-textfield my-10px">
+										<input placeholder=" " type="text">
+										<label>Classe</label>
+									</div>
+								</div>
+								<!-- add another classe btn -->
+								<a class="btn text" onclick="addClasse('.add-altro')">
+									<span class="material-symbols-outlined">add</span>
+								</a>
+								<!-- remove classe btn -->
+								<a class="btn text" id="rmclasse" onclick="removeClasse('.add-altro')" style="display:none">
+									<span class="material-symbols-outlined">remove</span>
+								</a>
+							</div>
+							<div class="add-insegnanti">
+								<div class="add-insegnanti-forms">
+									<div class="material-textfield my-10px">
+										<input placeholder=" " type="text">
+										<label>Insegnante</label>
+									</div>
+								</div>
+								<!-- add another prof btn -->
+								<a class="btn text" onclick="addProf('.add-altro')">
+									<span class="material-symbols-outlined">add</span>
+								</a>
+								<a class="btn text" id="rminsegnante" onclick="removeProf('.add-altro')" style="display:none">
+									<span class="material-symbols-outlined">remove</span>
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!---->
+
+				<!-- scripts -->
+				<script>
+					function addClasse(parent){
+						$(parent + " .add-classi-forms").append('<div class="material-textfield my-10px"><input placeholder=" " type="text"><label>Classe</label></div>');
+						$(parent + " #rmclasse").css("display","initial");
+						addEventListenerToUpper();
+					}
+					function removeClasse(parent){
+						if($(parent + " .add-classi-forms").children().length > 1){
+							$(parent + " .add-classi-forms").children().last().remove();
+							if($(parent + " .add-classi-forms").children().length == 1) $(parent + " #rmclasse").css("display","none");
+						}
+					}
+					function addProf(parent){
+						$(parent + " .add-insegnanti-forms").append('<div class="material-textfield my-10px"><input placeholder=" " type="text"><label>Insegnante</label></div>');
+						$(parent + " #rminsegnante").css("display","initial");
+						addEventListenerToUpper();
+					}
+					function removeProf(parent){
+						if($(parent + " .add-insegnanti-forms").children().length > 1){
+							$(parent + " .add-insegnanti-forms").children().last().remove();
+							if($(parent + " .add-insegnanti-forms").children().length == 1) $(parent + " #rminsegnante").css("display","none");
+						}
+					}
+					function addEventListenerToUpper(){
+						$(function() {
+							$('input:not([type="time"])').keyup(function() {
+								this.value = this.value.toLocaleUpperCase();
+							});
+						});
+					}
+					addEventListenerToUpper();
+
+				</script>
+
+				<button class="btn filled" onclick="addEvent()">Aggiungi</button>
+
+				<script>
+					function addEvent(){
+						// get date
+						var date = $(".events-header-date").text();
+						// parse date from italian abbr to number
+						var months = ["Gen", "Feb", "Mar", "Apr", "Mag", "Giu", "Lug", "Ago", "Set", "Ott", "Nov", "Dic"];
+						var date = date.split(" ");
+						var month = months.indexOf(date[1]) + 1; // get month number from array
+						if(month < 10) month = "0" + month; // write month with 2 digits
+						if(date[0] < 10) date[0] = "0" + date[0]; // write day with 2 digits
+						var date = date[2] + "-" + month + "-" + date[0];
+						// get type
+						var type = $(".add-type").val();
+						switch(type){
+							case "SOSTITUZIONE":
+								// get start and end time
+								var start = $(".add-sostituzione input[type='time']").eq(0).val();
+								var end = $(".add-sostituzione input[type='time']").eq(1).val();
+								// get aula
+								var aula = $(".add-sostituzione input[type='text']").eq(0).val();
+								// get classi
+								var classi = [];
+								$(".add-sostituzione .add-classi-forms input[type='text']").each(function(){
+									classi.push($(this).val());
+								});
+								// get prof
+								var prof = [];
+								$(".add-sostituzione .add-insegnanti-forms input[type='text']").each(function(){
+									prof.push($(this).val());
+								});
+
+								console.log(date, type, start, end, aula, classi, prof);
+
+								// send data to server as json
+								var json = {
+									date: date,
+									type: type,
+									start: start,
+									end: end,
+									location: aula,
+									classi: classi,
+									insegnanti: prof
+								};
+								$.ajax({
+									type: "POST",
+									url: "/post/addEvent",
+									data: json,
+									success: function(data){
+										console.log(data);
+									}
+								});
+
+								break;
+							case "ENTRATA POSTICIPATA":
+								// get classe
+								var classi = [];
+								classi.push($(".add-entrata input[type='text']").eq(0).val());
+								// get orario
+								var orario = $(".add-entrata input[type='time']").eq(0).val();
+
+								console.log(date, type, classi, orario);
+
+								// send data to server as json
+								$.ajax({
+									type: "POST",
+									url: "/post/addEvent",
+									data: {
+										date: date,
+										type: type,
+										classi: classi,
+										start: orario
+									},
+									success: function(data){
+										console.log(data);
+									}
+								});
+
+								break;
+							case "USCITA ANTICIPATA":
+								// get classe
+								var classi = [];
+								classi.push($(".add-uscita input[type='text']").eq(0).val());
+								// get orario
+								var orario = $(".add-uscita input[type='time']").eq(0).val();
+
+								console.log(date, type, classi, orario);
+
+								// send data to server as json
+								$.ajax({
+									type: "POST",
+									url: "/post/addEvent",
+									data: {
+										date: date,
+										type: type,
+										classi: classi,
+										start: orario
+									},
+									success: function(data){
+										console.log(data);
+									}
+								});
+
+								break;
+							case "PRENOTAZIONE AULA":
+								// get start and end time
+								var start = $(".add-prenotazione input[type='time']").eq(0).val();
+								var end = $(".add-prenotazione input[type='time']").eq(1).val();
+								// get aula
+								var aula = $(".add-prenotazione input[type='text']").eq(0).val();
+								// get prof
+								var prof = [];
+								prof.push($(".add-prenotazione input[type='text']").eq(1).val());
+
+								console.log(date, type, start, end, aula, prof);
+
+								// send data to server as json
+								$.ajax({
+									type: "POST",
+									url: "/post/addEvent",
+									data: {
+										date: date,
+										type: type,
+										start: start,
+										end: end,
+										location: aula,
+										insegnanti: prof
+									},
+									success: function(data){
+										console.log(data);
+									}
+								});
+
+								break;
+							case "ALTRO":
+								// get start and end time
+								var start = $(".add-altro input[type='time']").eq(0).val();
+								var end = $(".add-altro input[type='time']").eq(1).val();
+								// get summary
+								var summary = $(".add-altro input[type='text']").eq(0).val();
+								// get aula
+								var aula = $(".add-altro input[type='text']").eq(1).val();
+								// get classi
+								var classi = [];
+								$(".add-altro .add-classi-forms input[type='text']").each(function(){
+									classi.push($(this).val());
+								});
+								// get prof
+								var prof = [];
+								$(".add-altro .add-insegnanti-forms input[type='text']").each(function(){
+									prof.push($(this).val());
+								});
+
+								console.log(date, type, start, end, summary, aula, classi, prof);
+
+								// send data to server as json only if exists
+								// eg if aula is empty don't send it
+								var json = {
+									date : date,
+									type : type,
+									summary : summary,
+									start : start,
+								}
+								if(end != "") json.end = end;
+								if(aula != "") json.location = aula;
+								if(classi[0] != "") json.classi = classi;
+								if(prof[0] != "") json.insegnanti = prof;
+								
+								$.ajax({
+									type: "POST",
+									url: "/post/addEvent",
+									data: json,
+									success: function(data){
+										console.log(data);
+									}
+								});
+
+								break;
+							default:
+								break;
+						}
+						// reload
+						location.reload();
+					}
+				</script>
+
+				<script>
+					function deleteEvent(id){
+						data = {
+							id: id
+						};
+						$.ajax({
+							type: "POST",
+							url: "/post/deleteEvent",
+							data: data,
+							success: function(data){
+								console.log(data);
+							}
+						});
+						// reload
+						location.reload();
+					}
+				</script>
+
+			</div>
+		</div>
+	</div>
+
+	<script>
+		// temporary solution - redundant
+		function showModal(id, n){
+			if(n){
+				var modalhtml = `<div id="deleteModal" class="modal" style="display: grid;">
+				<div class="modal-inner">
+					<span class="btn text modal-close" onclick="closeModal('deleteModal')">&times;</span>
+					<div class="flex-center-y" style="width: 100%;">
+						<h2>Elimina Evento</h2>
+						<div class="my-10px">
+							<div class="flex-center">
+								<p>Sei sicuro di voler eliminare questo evento?</p>
+							</div>
+						</div>
+						<button class="btn filled" onclick="deleteEvent(${n})">Elimina</button>
+					</div>
+				</div>
+			</div>`;
+					$("body").append(modalhtml);
+			}else
+			document.getElementById(id).style.display = "grid";
+		}
+		function closeModal(id){
+			document.getElementById(id).style.display = "none";
+			if(id == "deleteModal") $("#deleteModal").remove();
+		}
+		// on esc close modal
+		document.onkeydown = function(evt) {
+			evt = evt || window.event;
+			if (evt.keyCode == 27) {
+				closeModal('addmodal');
+				closeModal('deleteModal');
+			}
+		};
+	</script>
+</div>
+
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,25 @@
+{
+  "events": [
+    {
+      "id": "3",
+      "summary": "PROGETTO SALVAVITA",
+      "location": "AULA MAGNA",
+      "classi": ["4AMME", "4BIIN"],
+      "insegnanti": ["PREVIATI"],
+      "start": [
+        { "date": "2024-03-11", "time": "08:00:00", "timezone": "Europe/Rome" }
+      ],
+      "end": [
+        { "date": "2024-03-11", "time": "13:00:00", "timezone": "Europe/Rome" }
+      ]
+    },
+    {
+      "id": "4",
+      "summary": "ENTRATA POSTICIPATA",
+      "classi": ["3AIIN"],
+      "start": [
+        { "date": "2024-03-11", "time": "09:00:00", "timezone": "Europe/Rome" }
+      ]
+    }
+  ]
+}
