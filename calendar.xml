@@ -119,4 +119,4 @@
 			<time>13:00:00</time>
 		</end>
 	</event>
-</events>
+<event id="9"><summary>PROVA INVALSI</summary><location>AULA MAC</location><classi><classe>5CIIN</classe></classi><insegnanti><insegnante>MUSTO</insegnante></insegnanti><start timezone="Europe/Rome"><date>2024-03-15</date><time>12:00:00</time></start><end timezone="Europe/Rome"><date>2024-03-15</date><time>14:00:00</time></end></event></events>

@@ -335,7 +335,7 @@ class CalendarControl {
 					});
 					html += '</div>';
 				}
-				html += `<p>${event.summary}</p>`;
+				html += `<p><b>${event.summary}</b></p>`;
 				if(event.location){
 					html += `<p>${event.location}</p>`;
 				}
@@ -416,6 +416,7 @@ function nextDay() {
 }
 
 // arrow left and right to navigate through days
+// TODO on modal open remove navigation event listeners
 document.addEventListener('keydown', function(event) {
 	if(event.key === 'ArrowLeft'){
 		calendarControl.navigateToPreviousDay();
