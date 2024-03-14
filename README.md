@@ -3,7 +3,7 @@ Calendar Manager è un progetto open-source per la gestione di un calendario uti
 
 
 ## Funzionamento
-Calendar Manager utilizza un server multithread HTTP in Java [Server.java](https://github.com/kev1nl1u/calendar-manager/blob/main/Server.java) per la gestione delle richieste e delle risposte dalla webapp in [./public](https://github.com/kev1nl1u/calendar-manager/tree/main/public).
+Calendar Manager utilizza un server multithread HTTP in Java [Server.java](https://github.com/kev1nl1u/calendar-manager/blob/main/Server.java) per la gestione delle richieste e delle risposte dalla webapp in [./public/](https://github.com/kev1nl1u/calendar-manager/tree/main/public).
 
 
 ### Server
