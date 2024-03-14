@@ -71,7 +71,7 @@ Infine, il codice è stato scritto in maniera molto semplice a causa dei tempi s
 
 
 ## Contatti
-Per qualsiasi dubbio o domanda, contattami [qui](https://kliu.win/contacts).
+Per qualsiasi dubbio o domanda, contattami [qui](https://blog.davidesirico.studio).
 
 
 # Licenza
