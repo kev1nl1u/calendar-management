@@ -24,6 +24,12 @@ Il metodo `Worker.get(params)` si occupa di gestire le richieste _GET_.
 
 In particolare, se il path non contiene `/common/` aggiunge `.html` al path, in modo da eliminare l'estensione nell'URL (es. `localhost:8080/edit` invece di `localhost:8080/edit.html`). In seguito cerca il file nella cartella `./public/` e lo invia al client. Se il file non esiste, restituisce un errore 404.
 
+Esistono 2 eccezioni per i path:
+<ul>
+<li><code>/dl</code>: viene inviato al client il file XML</li>
+<li><code>/api/getEvents</code>: viene passato con GET le classi di cui si vogliono conoscere gli eventi (es. <code>/api/getEvents?classes=5CIIN,5BMME</code>), se non viene passato niente, vengono inviati tutti gli eventi in formato JSON</li>
+</ul>
+
 
 ##### Worker.post(_params_)
 Il metodo `Worker.post(params)` si occupa di gestire le richieste _POST_.
@@ -32,7 +38,7 @@ Legge il corpo della richiesta per individuare i dati passati con POST.
 
 A seconda del path, esegue il codice necessario per elaborare una risposta.
 <ul>
-<li><code>/post/getEvents</code>
+<li><code>/api/getEvents</code>
 	<ol type="1">
 		<li>viene passato con POST la data</li>
 		<li>cerca tutti gli eventi nel file XML con <code>getXMLEventsByDate(params)</code> che hanno quella data</li>
@@ -41,7 +47,7 @@ A seconda del path, esegue il codice necessario per elaborare una risposta.
 	</ol>
 </li>
 <li>
-	<code>/post/addEvent</code> --> <code>Worker.addEvent(params)</code>
+	<code>/api/addEvent</code> --> <code>Worker.addEvent(params)</code>
 	<ol type="1">
 		<li>viene passato con POST i dati dell'evento in JSON</li>
 		<li>suddivide e inserisce i dati in un <code>HashMap</code></li>
@@ -50,7 +56,7 @@ A seconda del path, esegue il codice necessario per elaborare una risposta.
 	</ol>
 </li>
 <li>
-	<code>/post/deleteEvent</code> --> <code>Worker.deleteEvent(params)</code>
+	<code>/api/deleteEvent</code> --> <code>Worker.deleteEvent(params)</code>
 	<ol type="1">
 		<li>viene passato con POST l'id dell'evento</li>
 		<li>cerca l'evento nel file XML</li>

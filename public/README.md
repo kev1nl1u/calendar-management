@@ -1,6 +1,7 @@
 # Webapp
 La webapp è stata realizzata con HTML, CSS e JavaScript. La struttura è divisa in tre parti principali:
 - **index.html**: la pagina principale, con il calendario e la lista degli eventi;
+- **search.html**: la pagina per la ricerca degli eventi;
 - **edit.html**: la pagina per la modifica degli eventi;
 - **./common/**: la cartella con le risorse comuni, tra cui CSS, JavaScript e immagini.
 La webapp non è responsive.
