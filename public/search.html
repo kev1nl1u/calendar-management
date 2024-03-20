@@ -1,0 +1,528 @@
+
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Gestione calendario.">
+    <link rel="icon" type="image/x-icon" href="/common/img/favicon.webp">
+    <!-- css -->
+    <link rel="stylesheet" href="/common/css/style.css" type="text/css">
+    <link rel="stylesheet" href="/common/css/dark.css" type="text/css">
+	<link rel="stylesheet" href="/common/css/calendar.css" type="text/css">
+	<link rel="stylesheet" href="/common/css/cercaeventi.css" type="text/css">
+    <!-- Font Awesome -->
+    <script src="https://kit.fontawesome.com/95ae55bd9a.js" crossorigin="anonymous"></script>
+    <!-- Material Icon -->
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <!-- jQuery 3.6.0 -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <!-- Moment.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+
+    <title>Gestione Calendario</title>
+
+</head>
+<body>
+
+	<!-- SIDEBAR -->
+    <div class="sidebar">
+		<div class="sidebar-inner-float">
+			<div class="sidebar-inner">
+				<a class="sidebar-link" id="home" href="/">
+					<span class="material-symbols-outlined">calendar_month</span>
+					<span class="sidebar-link-text">Calendario</span>
+				</a>
+				<a href="/search" class="sidebar-link" id="search">
+					<span class="material-symbols-outlined">search</span>
+					<span class="sidebar-link-text">Cerca</span>
+				</a>
+				<a class="sidebar-link" id="edit" href="/edit">
+					<span class="material-symbols-outlined">edit_calendar</span>
+					<span class="sidebar-link-text">Modifica</span>
+				</a>
+				<a class="sidebar-link" id="dl" href="/dl">
+					<span class="material-symbols-outlined">download</span>
+					<span class="sidebar-link-text">DL XML</span>
+				</a>
+			</div>
+		</div>
+    </div>
+	<!-- SIDEBAR SCRIPTS -->
+	<script>
+        // set active
+        var active = document.getElementById('search');
+        active.classList.add('active');
+    </script>
+	<script>
+        // on scroll down hide / up show sidebar-link-text on mobile
+        function nav(){
+            if (window.innerWidth <= 600) {
+                var prevScrollpos = window.pageYOffset;
+                window.onscroll = function() {
+                    var currentScrollPos = window.pageYOffset;
+                    if (prevScrollpos > currentScrollPos || (window.innerHeight + window.pageYOffset) >= document.body.offsetHeight-1 || currentScrollPos < 10) {
+                        $(".sidebar-link-text").slideDown(300);
+                        $(".sidebar").css("height", "78px");
+                    } else {
+                        $(".sidebar-link-text").slideUp(300);
+                        $(".sidebar").css("height", "58px");
+                    }
+                    prevScrollpos = currentScrollPos;
+                }
+            } else {
+                // default size
+                $(".sidebar").css("height", "100%");
+                $(".sidebar-link-text").show();
+                window.onscroll = null;
+            }
+        }
+        nav();
+        window.onresize = function() {
+            nav();
+        };
+    </script>
+
+
+<!-- CONTENT -->
+	<div class="main-container">
+		<div class="main">
+
+<div id="CercaEventi" style="width: 100%;">
+<!-- cerca eventi -->
+<div class="cercaEventi-container" style="margin-bottom: 15px;">
+	<div class="cercaEventi">
+		<div class="cercaEventi-title">
+			<span class="material-symbols-outlined">
+				event
+			</span>
+			<h1>Cerca <br><span class="primary-text">eventi</span></h1>
+		</div>
+		<div class="cercaEventi-form">
+			<div class="material-textfield">
+				<input placeholder=" " type="text" id="cercaEventiInput" onkeyup="if (event.keyCode === 13) { cercaEventi(); }">
+				<label>Keyword</label>
+			</div>
+			<script>
+				$(function() {
+					$('#cercaEventiInput').keyup(function() {
+						this.value = this.value.toLocaleUpperCase();
+					});
+				});
+			</script>
+			<a id="submit-btn" class="btn filled addButton" onclick="cercaEventi()"><i class="fa-solid fa-chevron-right"></i></a>
+		</div>
+	</div>
+</div>
+
+<div class="cercaEventi-section">
+
+	<div class="cercaEventi-keywords-list" style="display: none;"></div>
+
+	<div class="cercaEventi-filter-container">
+		<div class="relative">
+			<a class="btn outlined flex-center" onclick="showFilters(this)"><span class="material-symbols-outlined material-space-right">tune</span> Filtri</a>
+			<span class="material-symbols-outlined filter-on-circle">
+				circle
+			</span>
+		</div>
+		<a class="btn outlined filter-btn hidden" onclick="filter(this)">Nascondi conclusi</a>
+		<a class="btn outlined filter-btn hidden" onclick="filter(this)">In corso</a>
+		<a class="btn outlined filter-btn hidden" onclick="filter(this)">Futuri</a>
+		<a class="btn outlined filter-btn hidden" onclick="filter(this)">Conclusi</a>
+	</div>
+
+	<div class="events-content-container">
+		<div id="events-loading" style="display: none;">
+			<div class="lds-grid">
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+			</div>
+		</div>
+
+		<div id="noevents" style="text-align: center; margin: 25px 0; display: none;"></div>
+
+		<!-- today -->
+		<div id="events-0" class="events-container">
+			<h3 class="events-date" id="events-0-date"></h3>
+			<div id="events-0-eventslist" class="events-list"></div>
+		</div>
+		<!-- tomorrow -->
+		<div id="events-1" class="events-container">
+			<h3 class="events-date" id="events-1-date"></h3>
+			<div id="events-1-eventslist" class="events-list"></div>
+		</div>
+		<!-- dopotomorrow -->
+		<div id="events-2" class="events-container">
+			<h3 class="events-date" id="events-2-date"></h3>
+			<div id="events-2-eventslist" class="events-list"></div>
+		</div>
+		<!-- all the rest -->
+		<div id="events-3" class="events-container">
+			<h3 class="events-date" id="events-3-date"></h3>
+			<div id="events-3-eventslist" class="events-list"></div>
+		</div>
+	</div>
+
+</div>
+
+		</div>
+	</div>
+
+<script>
+	var keywords = [];
+
+	// get saved keywords
+	if(localStorage.getItem("keywords") != null) keywords = JSON.parse(localStorage.getItem("keywords"));
+
+	printKeywords();
+
+	// get events from server
+	getEvents();
+
+	function printKeywords(){
+		$("#noevents").html("");
+		$("#noevents").hide();
+		$(".cercaEventi-keywords-list").html("");
+		$(".events-container").hide();
+		$("#events-loading").show();
+		$(".events-list").html("");
+		keywords.forEach(kw => {
+			$(".cercaEventi-keywords-list").append("<span class='cercaEventi-keyword' onclick='removeKeyword(this)'>" + kw + " <i class='fa-solid fa-delete-left'></i></span>");
+		});
+		
+		if(keywords.length > 0) $(".cercaEventi-keywords-list").show();
+		else $(".cercaEventi-keywords-list").hide();
+
+		localStorage.setItem("keywords", JSON.stringify(keywords));
+	}
+
+	// adds a keyword to the list
+	function cercaEventi(){
+
+		if($("#cercaEventiInput").val() == "") return;
+
+		// sanitize input
+		/*
+		* /</g and />/g replace < and > with &lt; and &gt;
+		* .trim() removes whitespace from start and end of string
+		*/
+		let inputkw = $("#cercaEventiInput").val().replace(/</g, "&lt;").replace(/>/g, "&gt;").trim();
+
+		if(!keywords.includes(inputkw)){
+			keywords.push(inputkw);
+		}
+		printKeywords();
+
+		getEvents();
+	}
+
+	// removes a keyword from the list
+	function removeKeyword(elem){
+		var keyword = $(elem).text();
+		keyword = keyword.substring(0, keyword.length - 1);
+		keywords.splice(keywords.indexOf(keyword), 1);
+		$(elem).remove();
+
+		printKeywords();
+
+		getEvents();
+	}
+
+	// function to get events from server
+	function getEvents(){
+		// if keywords is empty, show all events
+		if(keywords.length == 0){
+			$.ajax({
+				url: "/api/getEvents",
+				type: "GET",
+				success: function(data){
+					$("#events-loading").hide();
+					if(data.length == 0){
+						$("#noevents").html("Nessun evento trovato.");
+						$("#noevents").show();
+					}else{
+						$('#noevents .error-container').remove();
+						$("#events-loading").show();
+						$("#events-loading").hide();
+						printEvents(data);
+					}
+				},
+				error: function(){
+					$("#events-loading").hide();
+					$("#noevents").html("Errore nel caricamento degli eventi.");
+					$("#noevents").show();
+				}
+			});
+		}else{
+			$.ajax({
+				url: "/api/getEvents",
+				type: "GET",
+				data: {
+					classes: keywords.join(","),
+				},
+				contentType: "application/json",
+				success: function(data){
+					$('#noevents .error-container').remove();
+					$("#events-loading").show();
+					$("#events-loading").hide();
+					printEvents(data);
+				},
+				error: function(){
+					$("#events-loading").hide();
+					$("#noevents").html("Errore nel caricamento degli eventi.");
+					$("#noevents").show();
+				}
+			});
+		}
+	}
+
+	function printEvents(events, eventRunning) {
+
+		// generates html for an event
+		function getEventHTML(ev) {
+			
+			console.log(ev);
+
+			var html = `
+				<div class="event ${eventRunning}" id="event-${ev.id}">
+					<div class="event-info">`;
+
+			// print classes
+			if (ev.classi && ev.classi.length > 0) {
+				html += `<div class="flex">`;
+				ev.classi.forEach(classe => {
+					html += `<p class="event-info-classe tag">${classe}</p>`;
+				});
+				html += `</div>`;
+			}
+
+			// print event name
+			html += `<p>&gt; ${ev.summary}</p>`;
+
+			// print event location
+			if (ev.location != null)
+				html += `<p>${ev.location}</p>`;
+
+			// print prof
+			if (ev.insegnanti && ev.insegnanti.length > 0) {
+				ev.insegnanti.forEach(prof => {
+					html += `<p>${prof}</p>`;
+				});
+			}
+
+			html += `</div>`;
+
+			html += `
+				<div class="event-time">`;
+
+			// print start date if further than 3 days
+			if(moment(ev.start[0].date).diff(moment(), 'days') >= 3){
+				html += `<p class="event-time-start"><span class="material-symbols-outlined">event</span><span>${moment(ev.start[0].date).format("DD/MM/YYYY")}</span></p>`;
+			}
+
+			// print event time
+			if (ev.end[0].time != ev.start[0].time) { // if the same time, dont print end time
+			html += `
+					<p class="event-time-start">
+						<span class="start-end-text"><span class="material-symbols-outlined">start</span></span>
+						<span>${moment(ev.start[0].time, "HH:mm:ss").format("HH:mm")}</span>
+					</p>
+					<p class="event-time-end">
+						<span class="start-end-text"><span class="material-symbols-outlined mirrorElement">start</span></span>
+						<span>${moment(ev.end[0].time, "HH:mm:ss").format("HH:mm")}</span>
+					</p>`;
+			}else{ // use material icon schedule if the same time
+				html += `
+					<p class="event-time-start">
+						<span class="start-end-text"><span class="material-symbols-outlined">schedule</span></span>
+						<span>${moment(ev.start[0].time, "HH:mm:ss").format("HH:mm")}</span>
+					</p>`;
+			}
+			html += `</div>
+				</div>`;
+
+			return html;
+		}
+
+		addHeaders();
+
+
+		console.log(events);
+
+		var printedIDs = []; // array of events already printed
+
+		// transform events to json
+		events = JSON.parse(events);
+		
+		// put events in an array
+		events = events.events;
+
+		// for each event set end as start if end is null
+		for (var i = 0; i < events.length; i++) if(events[i].end == null) events[i].end = events[i].start;
+
+		// sort events by start date and start time
+		events.sort((a, b) => {
+			const startA = moment(`${a.start[0].date} ${a.start[0].time}`, 'YYYY-MM-DD HH:mm:ss');
+			const startB = moment(`${b.start[0].date} ${b.start[0].time}`, 'YYYY-MM-DD HH:mm:ss');
+			
+			if (startA.isBefore(startB)) return -1;
+			if (startA.isAfter(startB)) return 1;
+			return 0;
+		});
+
+		console.log(events); 
+
+		// for every event associated with the keyword
+		for (var i = 0; i < events.length; i++) {
+
+			var eventRunning = "";
+
+			if(printedIDs.includes(events[i].id)) // if event already printed
+				continue; // skip event
+
+			printedIDs.push(events[i].id); // event is printed
+
+			// if event is running
+			if(moment().isBetween(moment(events[i].start[0].date + " " + events[i].start[0].time, "YYYY-MM-DD HH:mm:ss"), moment(events[i].end[0].date + " " + events[i].end[0].time, "YYYY-MM-DD HH:mm:ss"))){
+				eventRunning = "event-running";
+			}
+
+			// if event is in the past
+			if(moment().isAfter(moment(events[i].end[0].date + " " + events[i].end[0].time, "YYYY-MM-DD HH:mm:ss"))){
+				eventRunning = "event-past";
+			}
+
+			// if event is in the future
+			if(moment().isBefore(moment(events[i].start[0].date + " " + events[i].start[0].time, "YYYY-MM-DD HH:mm:ss"))){
+				eventRunning = "event-future";
+			}
+
+			// print event
+			if(moment(events[i].start[0].date).diff(moment(), 'days') < 3){
+				$(`#events-${moment(events[i].start[0].date).diff(moment(), 'days')}-eventslist`).append(getEventHTML(events[i], eventRunning));
+			}else{
+				$(`#events-3-eventslist`).append(getEventHTML(events[i], eventRunning));
+			}
+
+			showEvents();
+		}
+
+	}
+
+	function addHeaders(){
+		const weekDay=["Lunedì","Martedì","Mercoledì","Giovedì","Venerdì","Sabato", "Domenica"];
+
+		// add headers for events for the next 3 days
+		for (let i = 0; i < 3; i++) {
+			const html = `<span class='color: primary-text'>${getDayDescription(i)}</span><span>${weekDay[moment().add(i, 'days').isoWeekday()-1]} ${moment().add(i, 'days').format("DD/MM/YYYY")}</span>`;
+			$(`#events-${i}-date`).html(html);
+		}
+		// if an event is more than 3 days ahead, add it to the last container
+		$("#events-3-date").html("<span class='color: primary-text'>Eventi futuri</span>");
+
+		function getDayDescription(daysAhead) {
+			switch (daysAhead) {
+				case 0:
+					return 'Oggi';
+				case 1:
+					return 'Domani';
+				case 2:
+					return 'Dopodomani';
+				default:
+					return;
+			}
+		}
+	}
+
+	function showEvents(){
+		// display block to every day container that has at least one event
+		for (let gg = 0; gg < 4; gg++) {
+			const $eventsContainer = $("#events-" + gg);
+			const hasEvents = $("#events-" + gg + "-eventslist").html().trim() !== "";
+			$eventsContainer.css("display", hasEvents ? "block" : "none");
+		}
+	}
+
+	// FILTER
+	function filter(elem){
+		// TODO filter on add/remove keyword
+
+		showEvents();
+		
+		const $elem = $(elem);
+		const isFilled = $elem.hasClass("filled");
+
+		// reset filter btn state
+		$(".filter-btn").removeClass("filled");
+		$(".filter-btn").addClass("outlined");
+
+		$(".event").css("display", "flex");
+
+		if (!isFilled) {
+			$elem.toggleClass("outlined filled");
+			switch ($elem.text()) {
+				case "Nascondi conclusi":
+					$(".event-past").hide();
+					break;
+				case "In corso":
+					$(".event, .event-past").hide();
+					$(".event-running").css("display", "flex");
+					break;
+				case "Futuri":
+					$(".event-past, .event-running").hide();
+					break;
+				case "Conclusi":
+					$(".event, .event-running").hide();
+					$(".event-past").css("display", "flex");
+					break;
+				default:
+					break;
+			}
+		}
+
+		/* $eventsContainer display
+		 * "none" se tutti event sono nascosti
+		 * "block" se almeno uno non è nascosto
+		 */
+		for (let gg = 0; gg < 4; gg++) {
+			const $eventsContainer = $("#events-" + gg);
+			const allChildrenHidden = $eventsContainer.find(".event").not(":hidden").length === 0;
+			$eventsContainer.css("display", allChildrenHidden ? "none" : "block");
+		}
+		
+	}
+
+	function showFilters(elem){
+		$elem = $(elem);
+		$elem.toggleClass('outlined filled');
+		
+		$elem.find('.material-symbols-outlined').html($elem.find('.material-symbols-outlined').html() == 'tune' ? 'close' : 'tune');
+
+		$('.filter-on-circle').css('visibility', 'hidden');
+		
+		let $filterBtns = $('.filter-btn');
+		for(let i = 0; i < $filterBtns.length; i++){
+            setTimeout(() => {
+				if($elem.hasClass('filled')){
+					$filterBtns.eq(i).removeClass('hidden fade-left-out');
+					$filterBtns.eq(i).addClass('fade-right');
+				}else{
+					if($filterBtns.eq($filterBtns.length - i - 1).hasClass('filled')) $('.filter-on-circle').css('visibility', 'visible');
+					$filterBtns.eq($filterBtns.length - i - 1).removeClass('fade-right');
+					$filterBtns.eq($filterBtns.length - i - 1).addClass('fade-left-out');
+				}
+            }, 150 * i);
+		}
+	}
+</script>
+</body>
+</html>

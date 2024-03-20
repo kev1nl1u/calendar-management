@@ -285,7 +285,7 @@ class CalendarControl {
 	// Load events for the selected date
 	loadEvents() {
 		// POST REQ TO GET EVENTS OF SELECTED DATE
-		fetch('/post/getEvents', {
+		fetch('/api/getEvents', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
@@ -414,14 +414,3 @@ function prevDay(){
 function nextDay() {
 	calendarControl.navigateToNextDay();
 }
-
-// arrow left and right to navigate through days
-// TODO on modal open remove navigation event listeners
-document.addEventListener('keydown', function(event) {
-	if(event.key === 'ArrowLeft'){
-		calendarControl.navigateToPreviousDay();
-	}
-	if(event.key === 'ArrowRight'){
-		calendarControl.navigateToNextDay();
-	}
-});

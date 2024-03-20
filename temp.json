@@ -23,3 +23,48 @@
     }
   ]
 }
+
+
+{
+  "events": [
+    {
+      "id": "7",
+      "summary": "SOSTITUZIONE",
+      "location": "AULA 360",
+      "classi": [
+        "5CIIN"
+      ],
+      "insegnanti": [
+        "GHEDINI"
+      ],
+      "start": [
+        {
+          "date": "2024-03-26",
+          "time": "11:00:00",
+          "timezone": "Europe/Rome"
+        }
+      ],
+      "end": [
+        {
+          "date": "2024-03-26",
+          "time": "12:00:00",
+          "timezone": "Europe/Rome"
+        }
+      ]
+    },
+    {
+      "id": "9",
+      "summary": "USCITA ANTICIPATA",
+      "classi": [
+        "5CIIN"
+      ],
+      "start": [
+        {
+          "date": "2024-03-20",
+          "time": "13:00:00",
+          "timezone": "Europe/Rome"
+        }
+      ]
+    }
+  ]
+}

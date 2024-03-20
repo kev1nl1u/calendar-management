@@ -86,6 +86,10 @@ class Worker extends Thread {
         }
     }
 
+/*************************************************************************************************************/
+/*                                              REQ METHODS                                                  */
+/*************************************************************************************************************/
+
     // get function
     private void get(OutputStream output, String fileName, String root) throws IOException {
         if(fileName.equals("/dl")){
@@ -102,7 +106,41 @@ class Worker extends Thread {
             output.write("\r\n".getBytes());
             output.write(fileContent);
             return;
+        }else if(fileName.contains("/api/getEvents")){
+            // get classes if exists, else empty array
+            NodeList events;
+            if(fileName.contains("?")){
+                String classestr = fileName.split("=")[1];
+                // decode and split
+                classestr = java.net.URLDecoder.decode(classestr, "UTF-8");
+                String[] classes = classestr.split(",");
+                for(int i = 0; i < classes.length; i++) classes[i] = classes[i].toUpperCase().trim();
+                System.out.println("\tClassi richieste: " + String.join(", ", classes));
+                events = getXMLEventsByClassi(classes);
+            }else{
+                // get all events
+                try{
+                    File file = new File("calendar.xml");
+                    DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+                    DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+                    Document doc = dBuilder.parse(file);
+                    doc.getDocumentElement().normalize();
+                    events = doc.getElementsByTagName("event");
+                }catch(Exception e){
+                    System.out.println("[WARN] " + clientSocket.getInetAddress() + " 500: " + fileName);
+                    output.write("HTTP/1.1 500 Internal Server Error\r\n\r\n".getBytes());
+                    return;
+                }
+            }
+            String json = nodeList2Json(events);
+            System.out.println(json);
+            output.write("HTTP/1.1 200 OK\r\n".getBytes());
+            output.write(("Content-Length: " + json.length() + "\r\n").getBytes());
+            output.write("\r\n".getBytes());
+            output.write(json.getBytes());
+            return;
         }
+        
         // if filename does not contain /common/ add .html
         if(!fileName.contains("/common/")) fileName += ".html";
         
@@ -140,7 +178,7 @@ class Worker extends Thread {
         while (input.ready()) requestBody.append((char) input.read());
 
         switch(fileName){
-            case "/post/getEvents": // get events by date
+            case "/api/getEvents": // get events by date
                 System.out.println("[INFO] " + clientSocket.getInetAddress() + " POST " + fileName + " " + requestBody.toString());
 
                 // parse date
@@ -158,7 +196,7 @@ class Worker extends Thread {
                 output.write(json.getBytes());
                 break;
 
-            case "/post/addEvent": // add event
+            case "/api/addEvent": // add event
                 System.out.println("[INFO] " + clientSocket.getInetAddress() + " POST " + fileName + " " + requestBody.toString());
 
                 addEvent(requestBody.toString());
@@ -167,7 +205,7 @@ class Worker extends Thread {
                 output.write("HTTP/1.1 200 OK\r\n\r\n".getBytes());
                 break;
 
-            case "/post/deleteEvent": // delete event
+            case "/api/deleteEvent": // delete event
                 System.out.println("[INFO] " + clientSocket.getInetAddress() + " POST " + fileName + " " + requestBody.toString());
 
                 // get id from request body
@@ -188,6 +226,10 @@ class Worker extends Thread {
         }
 
     }
+
+/*************************************************************************************************************/
+/*                                          GET EVENTS METHODS                                              */
+/*************************************************************************************************************/
 
     // get events by date from xml
     private NodeList getXMLEventsByDate(String date) {
@@ -212,6 +254,60 @@ class Worker extends Thread {
                             if(child.getChildNodes().item(k).getNodeName().equals("date") && child.getChildNodes().item(k).getTextContent().equals(date)){
                                 res.add(event); // add event to result
                                 System.out.println("[INFO] Event found: " + res.size());
+                            }
+                        }
+                    }
+                }
+            }
+            // arraylist to nodelist
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            Document newDoc = builder.newDocument();
+            Element root = newDoc.createElement("events");
+            newDoc.appendChild(root);
+            for (Node node : res) {
+                Node imported = newDoc.importNode(node, true);
+                root.appendChild(imported);
+            }
+            return root.getChildNodes(); // returns a NodeList
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    // get events by classi from xml
+    private NodeList getXMLEventsByClassi(String[] classi) {
+        try {
+            // CONTRAINS: get events starting from today
+            LocalDate today = LocalDate.now();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ENGLISH);
+            String date = today.format(formatter);
+
+            File file = new File("calendar.xml");
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            Document doc = dBuilder.parse(file);
+            doc.getDocumentElement().normalize(); // put all nodes to the same level
+            
+            NodeList events = doc.getElementsByTagName("event");
+
+            // filter all events by classi and date
+            ArrayList<Node> res = new ArrayList<>();
+            for (int i = 0; i < events.getLength(); i++) {
+                Node event = events.item(i); // <event> i
+                NodeList children = event.getChildNodes(); // <event> i children
+                for (int j = 0; j < children.getLength(); j++) { // for every child
+                    Node child = children.item(j); // <event> --> <summary> | <location> | <start> | <end> | ...
+                    if(child.getNodeName().equals("classi")){ // if child is <classi>
+                        // get <classe>
+                        for(int k = 0; k < child.getChildNodes().getLength(); k++) {
+                            if(child.getChildNodes().item(k).getNodeName().equals("classe")){
+                                for(String classe : classi){
+                                    if(child.getChildNodes().item(k).getTextContent().equals(classe)){
+                                        res.add(event); // add event to result
+                                    }
+                                }
                             }
                         }
                     }
@@ -338,6 +434,10 @@ class Worker extends Thread {
 
         return json.toString();
     }
+
+/*************************************************************************************************************/
+/*                                          EDIT EVENTS METHODS                                              */
+/*************************************************************************************************************/
 
     // add event to xml
     private static void addEvent(String requestBody) {

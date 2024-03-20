@@ -35,6 +35,10 @@
 					<span class="material-symbols-outlined">calendar_month</span>
 					<span class="sidebar-link-text">Calendario</span>
 				</a>
+				<a href="/search" class="sidebar-link" id="search">
+					<span class="material-symbols-outlined">search</span>
+					<span class="sidebar-link-text">Cerca</span>
+				</a>
 				<a class="sidebar-link" id="edit" href="/edit">
 					<span class="material-symbols-outlined">edit_calendar</span>
 					<span class="sidebar-link-text">Modifica</span>
@@ -119,7 +123,26 @@
 	</div>
 	<!-- SCRIPTS -->
 	<script src="/common/js/calendar.js"></script>
-	<script>const calendarControl = new CalendarControl(true);</script>
+	<script>
+	const calendarControl = new CalendarControl(true);
+	// arrow left and right to navigate through days
+	function prevDayArrow(event) {
+		if(event.key === 'ArrowLeft'){
+			calendarControl.navigateToPreviousDay();
+		}
+	}
+
+	function nextDayArrow(event) {
+		if(event.key === 'ArrowRight'){
+			calendarControl.navigateToNextDay();
+		}
+	}
+
+	// Add event listeners
+	document.addEventListener('keydown', prevDayArrow);
+	document.addEventListener('keydown', nextDayArrow);
+
+	</script>
 
 	<!-- MODAL -->
 	<div id="addmodal" class="modal">
@@ -129,7 +152,7 @@
 				<h2>Aggiungi Evento</h2>
 				<div class="my-10px">
 					<div class="flex-center">
-						<select class="add-type" name="gender" required>
+						<select class="add-type" required>
 							<option value="SOSTITUZIONE">Sostituzione</option>
 							<option value="ENTRATA POSTICIPATA">Entrata posticipata</option>
 							<option value="USCITA ANTICIPATA">Uscita anticipata</option>
@@ -419,7 +442,7 @@
 								};
 								$.ajax({
 									type: "POST",
-									url: "/post/addEvent",
+									url: "/api/addEvent",
 									data: json,
 									success: function(data){
 										console.log(data);
@@ -439,7 +462,7 @@
 								// send data to server as json
 								$.ajax({
 									type: "POST",
-									url: "/post/addEvent",
+									url: "/api/addEvent",
 									data: {
 										date: date,
 										type: type,
@@ -464,7 +487,7 @@
 								// send data to server as json
 								$.ajax({
 									type: "POST",
-									url: "/post/addEvent",
+									url: "/api/addEvent",
 									data: {
 										date: date,
 										type: type,
@@ -492,7 +515,7 @@
 								// send data to server as json
 								$.ajax({
 									type: "POST",
-									url: "/post/addEvent",
+									url: "/api/addEvent",
 									data: {
 										date: date,
 										type: type,
@@ -543,7 +566,7 @@
 								
 								$.ajax({
 									type: "POST",
-									url: "/post/addEvent",
+									url: "/api/addEvent",
 									data: json,
 									success: function(data){
 										console.log(data);
@@ -566,7 +589,7 @@
 						};
 						$.ajax({
 							type: "POST",
-							url: "/post/deleteEvent",
+							url: "/api/deleteEvent",
 							data: data,
 							success: function(data){
 								console.log(data);
@@ -584,7 +607,7 @@
 	<script>
 		// temporary solution - redundant
 		function showModal(id, n){
-			if(n){
+			if(n){ // append modal if delete
 				var modalhtml = `<div id="deleteModal" class="modal" style="display: grid;">
 				<div class="modal-inner">
 					<span class="btn text modal-close" onclick="closeModal('deleteModal')">&times;</span>
@@ -602,19 +625,31 @@
 					$("body").append(modalhtml);
 			}else
 			document.getElementById(id).style.display = "grid";
+			document.removeEventListener('keydown', prevDayArrow);
+			document.removeEventListener('keydown', nextDayArrow);
+			// on esc close modal
+			document.addEventListener('keydown', function(evt) {
+				evt = evt || window.event; // window.event for IE
+				if (evt.keyCode == 27) {
+					closeModal('addmodal');
+					closeModal('deleteModal');
+				}
+			});
 		}
 		function closeModal(id){
 			document.getElementById(id).style.display = "none";
 			if(id == "deleteModal") $("#deleteModal").remove();
+			document.addEventListener('keydown', prevDayArrow);
+			document.addEventListener('keydown', nextDayArrow);
+			// remove esc event
+			document.removeEventListener('keydown', function(evt) {
+				evt = evt || window.event;
+				if (evt.keyCode == 27) {
+					closeModal('addmodal');
+					closeModal('deleteModal');
+				}
+			});
 		}
-		// on esc close modal
-		document.onkeydown = function(evt) {
-			evt = evt || window.event;
-			if (evt.keyCode == 27) {
-				closeModal('addmodal');
-				closeModal('deleteModal');
-			}
-		};
 	</script>
 </div>
 
